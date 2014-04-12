@@ -7,6 +7,7 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
+import android.content.Context;
 
 import org.h2gis.h2spatialext.CreateSpatialExtension;
 
@@ -29,7 +30,8 @@ public class H2GIS extends CordovaPlugin {
         // your init code here
         try {
             Class.forName("org.h2.Driver");
-            this.connection = DriverManager.getConnection("jdbc:h2:mem:syntax", "sa", "sa");
+            String path=Context.getApplicationInfo().dataDir
+            this.connection = DriverManager.getConnection("jdbc:h2:"+path+";FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192");
             //this.st = connection.createStatement();
             // Import spatial functions, domains and drivers
             // If you are using a file database, you have to do only that once.
