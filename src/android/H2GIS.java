@@ -52,26 +52,26 @@ public class H2GIS extends CordovaPlugin {
                 String query = arg_object.getString("query").trim();
                 String firstWord = query.split(" ", 2)[0].toUpperCase();
                 Statement st=this.connection.createStatement();
-                if (st.execute(query)) {
-                    ResultSet rs = st.getResultSet();
+                // if (st.execute(query)) {
+                //     ResultSet rs = st.getResultSet();
+                //     JSONArray a= this.convert(rs);
+                //     callbackContext.success(a.toString());
+                // } else {
+                //     this.connection.createStatement().execute(query);
+                //     callbackContext.success("Success");
+                // }
+
+
+                //old code
+
+                if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
+                    ResultSet rs = this.connection.createStatement().executeQuery(query);
                     JSONArray a= this.convert(rs);
                     callbackContext.success(a.toString());
                 } else {
                     this.connection.createStatement().execute(query);
                     callbackContext.success("Success");
                 }
-
-
-                //old code
-
-                // if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
-                //     ResultSet rs = this.connection.createStatement().executeQuery(query);
-                //     JSONArray a= this.convert(rs);
-                //     callbackContext.success(a.toString());
-                // } else {
-                //     this.connection.createStatement().execute(query);
-                //     callbackContext.success("LOL");
-                // }
                 return true;
             }
             callbackContext.error("Invalid action");
