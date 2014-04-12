@@ -30,7 +30,8 @@ public class H2GIS extends CordovaPlugin {
         // your init code here
         try {
             Class.forName("org.h2.Driver");
-            String path=Context.getApplicationInfo().dataDir;
+            Context context=this.cordova.getActivity().getApplicationContext();
+            String path=context.getApplicationInfo().dataDir;
             try {
                 connection = DriverManager.getConnection("jdbc:h2:"+path+";FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;IFEXISTS=TRUE");
             } catch (Exception e) {
