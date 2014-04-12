@@ -29,9 +29,9 @@ public class H2GIS extends CordovaPlugin {
         super.initialize(cordova, webView);
         // your init code here
         try {
-            Class.forName("org.h2.Driver");
             Context context=this.cordova.getActivity().getApplicationContext();
             String path=context.getApplicationInfo().dataDir;
+            Class.forName("org.h2.Driver");
             try {
                 connection = DriverManager.getConnection("jdbc:h2:"+path+";FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;IFEXISTS=TRUE");
             } catch (Exception e) {
@@ -47,11 +47,14 @@ public class H2GIS extends CordovaPlugin {
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         try {
+            Context context=this.cordova.getActivity().getApplicationContext();
+            String path=context.getApplicationInfo().dataDir;
             if (ACTION_QUERY.equals(action)) {
                 JSONObject arg_object = args.getJSONObject(0);
                 String query = arg_object.getString("query").trim();
                 String firstWord = query.split(" ", 2)[0].toUpperCase();
-                Statement st=this.connection.createStatement();
+
+                // Statement st=this.connection.createStatement();
                 // if (st.execute(query)) {
                 //     ResultSet rs = st.getResultSet();
                 //     JSONArray a= this.convert(rs);
@@ -77,7 +80,7 @@ public class H2GIS extends CordovaPlugin {
             callbackContext.error("Invalid action");
             return false;
         } catch(Exception e) {
-            System.err.println("Exception: " + e.getMessage());
+            System.err.println("Exception: " + e.getMessage() + "path= "+path);
             callbackContext.error(e.getMessage());
             return false;
         }
