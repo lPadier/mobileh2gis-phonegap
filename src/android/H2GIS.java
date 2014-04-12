@@ -33,9 +33,9 @@ public class H2GIS extends CordovaPlugin {
             String path=context.getApplicationInfo().dataDir;
             Class.forName("org.h2.Driver");
             try {
-                connection = DriverManager.getConnection("jdbc:h2:"+path+";FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;IFEXISTS=TRUE");
+                connection = DriverManager.getConnection("jdbc:h2:"+path+"data;FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;IFEXISTS=TRUE");
             } catch (Exception e) {
-                connection = DriverManager.getConnection("jdbc:h2:"+path+";FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;");
+                connection = DriverManager.getConnection("jdbc:h2:"+path+"data;FILE_LOCK=FS;PAGE_SIZE=1024;CACHE_SIZE=8192;");
                 CreateSpatialExtension.initSpatialExtension(connection);
             }
         } catch (Exception ex) {
@@ -82,7 +82,7 @@ public class H2GIS extends CordovaPlugin {
             return false;
         } catch(Exception e) {
             System.err.println("Exception: " + e.getMessage() + "path= "+path);
-            callbackContext.error(e.getMessage());
+            callbackContext.error(e.getMessage()+ "path= "+path);
             return false;
         }
     }
