@@ -51,7 +51,7 @@ public class H2GIS extends CordovaPlugin {
             Context context=this.cordova.getActivity().getApplicationContext();
             path=context.getApplicationInfo().dataDir;
             if (ACTION_QUERY.equals(action)) {
-                JSONObject arg_object = args.getJSONObject(0);
+                org.json.JSONObject arg_object = args.getJSONObject(0);
                 String query = arg_object.getString("query").trim();
                 String firstWord = query.split(" ", 2)[0].toUpperCase();
 
