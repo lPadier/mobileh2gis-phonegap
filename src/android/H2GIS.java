@@ -6,11 +6,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
-import org.json.JSONString;
-import org.json.JSONObject;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONStringer;
+import org.json2.*;
 import android.content.Context;
 
 import org.h2gis.h2spatialext.CreateSpatialExtension;
