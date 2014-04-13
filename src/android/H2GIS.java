@@ -1,7 +1,5 @@
 package org.ogis.h2gis;
 
-import org.ogis.h2gis.*;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaInterface;
