@@ -1,6 +1,6 @@
 package org.ogis.h2gis;
 
-import org.json.JSONString;
+import org.json.*;
 
 
 public class MyJsonString implements JSONString {

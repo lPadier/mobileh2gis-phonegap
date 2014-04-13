@@ -41,6 +41,7 @@
         <source-file src="lib/slf4j-api-1.6.0.jar" target-dir="libs" />
         <source-file src="lib/slf4j-simple-1.6.0.jar" target-dir="libs" />
         <source-file src="lib/spatial-utilities-1.0.3-SNAPSHOT.jar" target-dir="libs" />
+        <source-file src="lib/org.json-20120521.jar" target-dir="libs" />
 
      </platform>
 </plugin>
