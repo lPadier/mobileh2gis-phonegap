@@ -198,7 +198,7 @@ public class H2GIS extends CordovaPlugin {
                     String s=rs.getNString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
                     if(start.equals("{\"type\":")) {
-                        result.key(column_name).value( new MyJsonString(rs.getNString(i)));
+                        result.key(column_name).value( new MyJsonString(rs.getNString(i)).toJSONString());
                     } else {
                         result.key(column_name).value(rs.getNString(i));
                     }
@@ -207,7 +207,7 @@ public class H2GIS extends CordovaPlugin {
                     String s=rs.getNString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
                     if (start.equals("{\"type\":")) {
-                        result.key(column_name).value( new MyJsonString(rs.getString(column_name)));
+                        result.key(column_name).value( new MyJsonString(rs.getString(i)).toJSONString());
                     } else {
                         result.key(column_name).value(rs.getString(column_name));
                     }
