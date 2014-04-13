@@ -7,6 +7,7 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONStringer;
 import android.content.Context;
 
 import org.h2gis.h2spatialext.CreateSpatialExtension;
