@@ -58,7 +58,7 @@ public class H2GIS extends CordovaPlugin {
                 // Statement st=this.connection.createStatement();
                 // if (st.execute(query)) {
                 //     ResultSet rs = st.getResultSet();
-                //     JSONArray a= this.convert(rs);
+                //     JSONArray a= H2GIS.convert(rs);
                 //     callbackContext.success(a.toString());
                 // } else {
                 //     this.connection.createStatement().execute(query);
@@ -70,8 +70,9 @@ public class H2GIS extends CordovaPlugin {
 
                 if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
                     ResultSet rs = this.connection.createStatement().executeQuery(query);
-                    JSONArray a= this.convert(rs);
-                    callbackContext.success(a.toString());
+                    // JSONArray a= H2GIS.convert(rs);
+                    // callbackContext.success(a.toString());
+                    callbackContext.success(H2GIS.convert2(rs));
                 } else {
                     this.connection.createStatement().execute(query);
                     callbackContext.success("Success");
@@ -158,5 +159,78 @@ public class H2GIS extends CordovaPlugin {
         }
 
         return json;
+    }
+
+
+    public static String convert2( ResultSet rs ) throws SQLException, JSONException {
+        JSONStringer result= new JSONStringer().array();
+        ResultSetMetaData rsmd = rs.getMetaData();
+
+        while(rs.next()) {
+            int numColumns = rsmd.getColumnCount();
+            result.object();
+
+            for (int i=1; i<numColumns+1; i++) {
+                String column_name = rsmd.getColumnName(i);
+
+                if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
+                    // Not implemented
+                } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
+                    result.key(column_name).value(rs.getInt(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
+                    result.key(column_name).value(rs.getBoolean(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
+                    // Not implemented
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
+                    result.key(column_name).value(rs.getDouble(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
+                    result.key(column_name).value(rs.getFloat(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
+                    result.key(column_name).value(rs.getInt(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
+                    String s=rs.getNString(column_name);
+                    String start=s.substring(0,Math.min(s.length(),8));
+                    if(start.equals("{\"type\":")) {
+                        result.key(column_name).value( new JSONObject(rs.getNString(i)));
+                    } else {
+                        result.key(column_name).value(rs.getNString(i));
+                    }
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
+                    String s=rs.getNString(column_name);
+                    String start=s.substring(0,Math.min(s.length(),8));
+                    if (start.equals("{\"type\":")) {
+                        result.key(column_name).value( new JSONObject(rs.getString(column_name)));
+                    } else {
+                        result.key(column_name).value(rs.getString(column_name));
+                    }
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
+                    result.key(column_name).value(rs.getInt(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
+                    result.key(column_name).value(rs.getInt(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
+                    result.key(column_name).value(rs.getDate(i));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
+                    result.key(column_name).value(rs.getTimestamp(i));
+                }
+                else{
+                    // Not implemented
+                }
+            }
+
+            result.endObject();
+        }
+        result.endArray();
+        return result.toString();
     }
 }
