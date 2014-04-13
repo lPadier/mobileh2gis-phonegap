@@ -162,8 +162,8 @@ public class H2GIS extends CordovaPlugin {
     }
 
 
-    public static String convert2( ResultSet rs ) throws SQLException, JSONException {
-        JSONStringer result= new JSONStringer();
+    public static String convert2( ResultSet rs ) throws SQLException, org.json2.JSONException {
+        org.json2.JSONStringer result= new org.json2.JSONStringer();
         result.array();
         ResultSetMetaData rsmd = rs.getMetaData();
 
