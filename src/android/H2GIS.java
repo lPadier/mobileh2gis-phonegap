@@ -50,7 +50,7 @@ public class H2GIS extends CordovaPlugin {
             Context context=this.cordova.getActivity().getApplicationContext();
             path=context.getApplicationInfo().dataDir;
             if (ACTION_QUERY.equals(action)) {
-                org.json.JSONObject arg_object = args.getJSONObject(0);
+                JSONObject arg_object = args.getJSONObject(0);
                 String query = arg_object.getString("query").trim();
 
 
@@ -234,18 +234,14 @@ public class H2GIS extends CordovaPlugin {
     //     return result.toString();
     // }
         public static String rs2JSON( ResultSet rs ) throws SQLException {
-        org.json2.JSONStringer result= new org.json2.JSONStringer();
-        result.array();
         ResultSetMetaData rsmd = rs.getMetaData();
         String array="";
         while(rs.next()) {
             int numColumns = rsmd.getColumnCount();
-            result.object();
             String object="";
             for (int i=1; i<numColumns+1; i++) {
                 object="";
                 String column_name = rsmd.getColumnName(i);
-
                 if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
                     String s=rs.getNString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
