@@ -72,7 +72,7 @@ public class H2GIS extends CordovaPlugin {
                     ResultSet rs = this.connection.createStatement().executeQuery(query);
                     // JSONArray a= H2GIS.convert(rs);
                     // callbackContext.success(a.toString());
-                    callbackContext.success(H2GIS.convert2(rs));
+                    callbackContext.success(H2GIS.rs2JSON(rs));
                 } else {
                     this.connection.createStatement().execute(query);
                     callbackContext.success("Success");
