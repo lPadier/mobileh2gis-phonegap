@@ -55,28 +55,28 @@ public class H2GIS extends CordovaPlugin {
                 String query = arg_object.getString("query").trim();
 
 
-                Statement st=this.connection.createStatement();
-                if (st.execute(query)) {
-                    ResultSet rs = st.getResultSet();
-                    callbackContext.success(H2GIS.rs2JSON(rs));
-                } else {
-                    this.connection.createStatement().execute(query);
-                    callbackContext.success("Success");
-                }
-
-
-                //old code
-
-                // String firstWord = query.split(" ", 2)[0].toUpperCase();
-                // if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
-                //     ResultSet rs = this.connection.createStatement().executeQuery(query);
-                //     // JSONArray a= H2GIS.convert(rs);
-                //     // callbackContext.success(a.toString());
-                //     callbackContext.success(H2GIS.convert2(rs));
+                // Statement st=this.connection.createStatement();
+                // if (st.execute(query)) {
+                //     ResultSet rs = st.getResultSet();
+                //     callbackContext.success(H2GIS.rs2JSON(rs));
                 // } else {
                 //     this.connection.createStatement().execute(query);
                 //     callbackContext.success("Success");
                 // }
+
+
+                //old code
+
+                String firstWord = query.split(" ", 2)[0].toUpperCase();
+                if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
+                    ResultSet rs = this.connection.createStatement().executeQuery(query);
+                    // JSONArray a= H2GIS.convert(rs);
+                    // callbackContext.success(a.toString());
+                    callbackContext.success(H2GIS.convert2(rs));
+                } else {
+                    this.connection.createStatement().execute(query);
+                    callbackContext.success("Success");
+                }
                 return true;
             }
             callbackContext.error("Invalid action");
