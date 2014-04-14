@@ -46,7 +46,7 @@ public class H2GIS extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        String path="";
+        String path=new String("");
         try {
             Context context=this.cordova.getActivity().getApplicationContext();
             path=context.getApplicationInfo().dataDir;
@@ -72,7 +72,7 @@ public class H2GIS extends CordovaPlugin {
                     ResultSet rs = this.connection.createStatement().executeQuery(query);
                     // JSONArray a= H2GIS.convert(rs);
                     // callbackContext.success(a.toString());
-                    callbackContext.success(H2GIS.rs2JSON(rs));
+                    callbackContext.success(H2GIS.rs2JSON(rs)+H2GIS.convert(rs).toString());
                 } else {
                     this.connection.createStatement().execute(query);
                     callbackContext.success("Success");
@@ -89,77 +89,77 @@ public class H2GIS extends CordovaPlugin {
     }
 
 
-    // public static JSONArray convert( ResultSet rs ) throws SQLException, JSONException {
-    //     JSONArray json = new JSONArray();
-    //     ResultSetMetaData rsmd = rs.getMetaData();
+    public static JSONArray convert( ResultSet rs ) throws SQLException, JSONException {
+        JSONArray json = new JSONArray();
+        ResultSetMetaData rsmd = rs.getMetaData();
 
-    //     while(rs.next()) {
-    //         int numColumns = rsmd.getColumnCount();
-    //         JSONObject obj = new JSONObject();
+        while(rs.next()) {
+            int numColumns = rsmd.getColumnCount();
+            JSONObject obj = new JSONObject();
 
-    //         for (int i=1; i<numColumns+1; i++) {
-    //             String column_name = rsmd.getColumnName(i);
+            for (int i=1; i<numColumns+1; i++) {
+                String column_name = rsmd.getColumnName(i);
 
-    //             if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
-    //                 obj.put(column_name, rs.getArray(column_name));
-    //             } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
-    //                 obj.put(column_name, rs.getInt(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
-    //                 obj.put(column_name, rs.getBoolean(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
-    //                 obj.put(column_name, rs.getBlob(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
-    //                 obj.put(column_name, rs.getDouble(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
-    //                 obj.put(column_name, rs.getFloat(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
-    //                 obj.put(column_name, rs.getInt(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
-    //                 String s=rs.getNString(column_name);
-    //                 String start=s.substring(0,Math.min(s.length(),8));
-    //                 if(start.equals("{\"type\":")) {
-    //                     obj.put(column_name, new JSONObject(rs.getNString(column_name)));
-    //                 } else {
-    //                     obj.put(column_name, rs.getNString(column_name));
-    //                 }
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
-    //                 String s=rs.getNString(column_name);
-    //                 String start=s.substring(0,Math.min(s.length(),8));
-    //                 if (start.equals("{\"type\":")) {
-    //                     obj.put(column_name, new JSONObject(rs.getString(column_name)));
-    //                 } else {
-    //                     obj.put(column_name, rs.getString(column_name));
-    //                 }
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
-    //                 obj.put(column_name, rs.getInt(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
-    //                 obj.put(column_name, rs.getInt(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
-    //                 obj.put(column_name, rs.getDate(column_name));
-    //             }
-    //             else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
-    //                 obj.put(column_name, rs.getTimestamp(column_name));
-    //             }
-    //             else{
-    //                 obj.put(column_name, rs.getObject(column_name));
-    //             }
-    //         }
+                if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
+                    obj.put(column_name, rs.getArray(column_name));
+                } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
+                    obj.put(column_name, rs.getInt(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
+                    obj.put(column_name, rs.getBoolean(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
+                    obj.put(column_name, rs.getBlob(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
+                    obj.put(column_name, rs.getDouble(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
+                    obj.put(column_name, rs.getFloat(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
+                    obj.put(column_name, rs.getInt(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
+                    String s=rs.getNString(column_name);
+                    String start=s.substring(0,Math.min(s.length(),8));
+                    if(start.equals("{\"type\":")) {
+                        obj.put(column_name, new JSONObject(rs.getNString(column_name)));
+                    } else {
+                        obj.put(column_name, rs.getNString(column_name));
+                    }
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
+                    String s=rs.getNString(column_name);
+                    String start=s.substring(0,Math.min(s.length(),8));
+                    if (start.equals("{\"type\":")) {
+                        obj.put(column_name, new JSONObject(rs.getString(column_name)));
+                    } else {
+                        obj.put(column_name, rs.getString(column_name));
+                    }
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
+                    obj.put(column_name, rs.getInt(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
+                    obj.put(column_name, rs.getInt(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
+                    obj.put(column_name, rs.getDate(column_name));
+                }
+                else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
+                    obj.put(column_name, rs.getTimestamp(column_name));
+                }
+                else{
+                    obj.put(column_name, rs.getObject(column_name));
+                }
+            }
 
-    //         json.put(obj);
-    //     }
+            json.put(obj);
+        }
 
-    //     return json;
-    // }
+        return json;
+    }
 
 
     // public static String convert2( ResultSet rs ) throws SQLException, org.json2.JSONException {
@@ -237,9 +237,9 @@ public class H2GIS extends CordovaPlugin {
         public static String rs2JSON( ResultSet rs ) throws SQLException {
         ResultSetMetaData rsmd = rs.getMetaData();
         String array="";
+        String object="";
         while(rs.next()) {
             int numColumns = rsmd.getColumnCount();
-            String object="";
             for (int i=1; i<numColumns+1; i++) {
                 object="";
                 String column_name = rsmd.getColumnName(i);
