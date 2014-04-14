@@ -233,7 +233,6 @@ public class H2GIS extends CordovaPlugin {
     //     result.endArray();
     //     return result.toString();
     // }
-
         public static String rs2JSON( ResultSet rs ) throws SQLException {
         org.json2.JSONStringer result= new org.json2.JSONStringer();
         result.array();
@@ -295,7 +294,7 @@ public class H2GIS extends CordovaPlugin {
             array+=object;
         }
         if (!array.equals("")) {
-            array=array.substring(0,array.length() -1)
+            array=array.substring(0,array.length() -1);
         }
         array="["+array+"]";
         return array;
