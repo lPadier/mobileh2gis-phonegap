@@ -6,7 +6,6 @@ import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaWebView;
 import org.json.JSONException;
 import org.json.JSONArray;
-import org.json2.*;
 import android.content.Context;
 
 import org.h2gis.h2spatialext.CreateSpatialExtension;
@@ -53,30 +52,30 @@ public class H2GIS extends CordovaPlugin {
             if (ACTION_QUERY.equals(action)) {
                 org.json.JSONObject arg_object = args.getJSONObject(0);
                 String query = arg_object.getString("query").trim();
-                String firstWord = query.split(" ", 2)[0].toUpperCase();
-
-                // Statement st=this.connection.createStatement();
-                // if (st.execute(query)) {
-                //     ResultSet rs = st.getResultSet();
-                //     JSONArray a= H2GIS.convert(rs);
-                //     callbackContext.success(a.toString());
-                // } else {
-                //     this.connection.createStatement().execute(query);
-                //     callbackContext.success("Success");
-                // }
 
 
-                //old code
-
-                if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
-                    ResultSet rs = this.connection.createStatement().executeQuery(query);
-                    // JSONArray a= H2GIS.convert(rs);
-                    // callbackContext.success(a.toString());
-                    callbackContext.success(H2GIS.convert2(rs));
+                Statement st=this.connection.createStatement();
+                if (st.execute(query)) {
+                    ResultSet rs = st.getResultSet();
+                    callbackContext.success(H2GIS.rs2JSON(rs));
                 } else {
                     this.connection.createStatement().execute(query);
                     callbackContext.success("Success");
                 }
+
+
+                //old code
+
+                // String firstWord = query.split(" ", 2)[0].toUpperCase();
+                // if (firstWord.equals("SELECT") || firstWord.equals("SHOW")) {
+                //     ResultSet rs = this.connection.createStatement().executeQuery(query);
+                //     // JSONArray a= H2GIS.convert(rs);
+                //     // callbackContext.success(a.toString());
+                //     callbackContext.success(H2GIS.convert2(rs));
+                // } else {
+                //     this.connection.createStatement().execute(query);
+                //     callbackContext.success("Success");
+                // }
                 return true;
             }
             callbackContext.error("Invalid action");
@@ -89,149 +88,216 @@ public class H2GIS extends CordovaPlugin {
     }
 
 
-    public static JSONArray convert( ResultSet rs ) throws SQLException, JSONException {
-        JSONArray json = new JSONArray();
-        ResultSetMetaData rsmd = rs.getMetaData();
+    // public static JSONArray convert( ResultSet rs ) throws SQLException, JSONException {
+    //     JSONArray json = new JSONArray();
+    //     ResultSetMetaData rsmd = rs.getMetaData();
 
-        while(rs.next()) {
-            int numColumns = rsmd.getColumnCount();
-            JSONObject obj = new JSONObject();
+    //     while(rs.next()) {
+    //         int numColumns = rsmd.getColumnCount();
+    //         JSONObject obj = new JSONObject();
 
-            for (int i=1; i<numColumns+1; i++) {
-                String column_name = rsmd.getColumnName(i);
+    //         for (int i=1; i<numColumns+1; i++) {
+    //             String column_name = rsmd.getColumnName(i);
 
-                if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
-                    obj.put(column_name, rs.getArray(column_name));
-                } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
-                    obj.put(column_name, rs.getInt(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
-                    obj.put(column_name, rs.getBoolean(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
-                    obj.put(column_name, rs.getBlob(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
-                    obj.put(column_name, rs.getDouble(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
-                    obj.put(column_name, rs.getFloat(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
-                    obj.put(column_name, rs.getInt(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
-                    String s=rs.getNString(column_name);
-                    String start=s.substring(0,Math.min(s.length(),8));
-                    if(start.equals("{\"type\":")) {
-                        obj.put(column_name, new JSONObject(rs.getNString(column_name)));
-                    } else {
-                        obj.put(column_name, rs.getNString(column_name));
-                    }
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
-                    String s=rs.getNString(column_name);
-                    String start=s.substring(0,Math.min(s.length(),8));
-                    if (start.equals("{\"type\":")) {
-                        obj.put(column_name, new JSONObject(rs.getString(column_name)));
-                    } else {
-                        obj.put(column_name, rs.getString(column_name));
-                    }
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
-                    obj.put(column_name, rs.getInt(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
-                    obj.put(column_name, rs.getInt(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
-                    obj.put(column_name, rs.getDate(column_name));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
-                    obj.put(column_name, rs.getTimestamp(column_name));
-                }
-                else{
-                    obj.put(column_name, rs.getObject(column_name));
-                }
-            }
+    //             if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
+    //                 obj.put(column_name, rs.getArray(column_name));
+    //             } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
+    //                 obj.put(column_name, rs.getInt(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
+    //                 obj.put(column_name, rs.getBoolean(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
+    //                 obj.put(column_name, rs.getBlob(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
+    //                 obj.put(column_name, rs.getDouble(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
+    //                 obj.put(column_name, rs.getFloat(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
+    //                 obj.put(column_name, rs.getInt(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
+    //                 String s=rs.getNString(column_name);
+    //                 String start=s.substring(0,Math.min(s.length(),8));
+    //                 if(start.equals("{\"type\":")) {
+    //                     obj.put(column_name, new JSONObject(rs.getNString(column_name)));
+    //                 } else {
+    //                     obj.put(column_name, rs.getNString(column_name));
+    //                 }
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
+    //                 String s=rs.getNString(column_name);
+    //                 String start=s.substring(0,Math.min(s.length(),8));
+    //                 if (start.equals("{\"type\":")) {
+    //                     obj.put(column_name, new JSONObject(rs.getString(column_name)));
+    //                 } else {
+    //                     obj.put(column_name, rs.getString(column_name));
+    //                 }
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
+    //                 obj.put(column_name, rs.getInt(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
+    //                 obj.put(column_name, rs.getInt(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
+    //                 obj.put(column_name, rs.getDate(column_name));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
+    //                 obj.put(column_name, rs.getTimestamp(column_name));
+    //             }
+    //             else{
+    //                 obj.put(column_name, rs.getObject(column_name));
+    //             }
+    //         }
 
-            json.put(obj);
-        }
+    //         json.put(obj);
+    //     }
 
-        return json;
-    }
+    //     return json;
+    // }
 
 
-    public static String convert2( ResultSet rs ) throws SQLException, org.json2.JSONException {
+    // public static String convert2( ResultSet rs ) throws SQLException, org.json2.JSONException {
+    //     org.json2.JSONStringer result= new org.json2.JSONStringer();
+    //     result.array();
+    //     ResultSetMetaData rsmd = rs.getMetaData();
+
+    //     while(rs.next()) {
+    //         int numColumns = rsmd.getColumnCount();
+    //         result.object();
+
+    //         for (int i=1; i<numColumns+1; i++) {
+    //             String column_name = rsmd.getColumnName(i);
+
+    //             if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
+    //                 // Not implemented
+    //             } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
+    //                 result.key(column_name).value(rs.getInt(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
+    //                 result.key(column_name).value(rs.getBoolean(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
+    //                 // Not implemented
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
+    //                 result.key(column_name).value(rs.getDouble(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
+    //                 result.key(column_name).value(rs.getFloat(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
+    //                 result.key(column_name).value(rs.getInt(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
+    //                 String s=rs.getNString(column_name);
+    //                 String start=s.substring(0,Math.min(s.length(),8));
+    //                 if(start.equals("{\"type\":")) {
+    //                     result.key(column_name.toLower()).value( new MyJsonString(s));
+    //                 } else {
+    //                     result.key(column_name).value(s);
+    //                 }
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
+    //                 String s=rs.getString(column_name);
+    //                 String start=s.substring(0,Math.min(s.length(),8));
+    //                 if (start.equals("{\"type\":")) {
+    //                     result.key(column_name).value( new MyJsonString(s));
+    //                 } else {
+    //                     result.key(column_name).value(s);
+    //                 }
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
+    //                 result.key(column_name).value(rs.getInt(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
+    //                 result.key(column_name).value(rs.getInt(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
+    //                 result.key(column_name).value(rs.getDate(i));
+    //             }
+    //             else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
+    //                 result.key(column_name).value(rs.getTimestamp(i));
+    //             }
+    //             else{
+    //                 // Not implemented
+    //             }
+    //         }
+
+    //         result.endObject();
+    //     }
+    //     result.endArray();
+    //     return result.toString();
+    // }
+
+        public static String rs2JSON( ResultSet rs ) throws SQLException {
         org.json2.JSONStringer result= new org.json2.JSONStringer();
         result.array();
         ResultSetMetaData rsmd = rs.getMetaData();
-
+        String array="";
         while(rs.next()) {
             int numColumns = rsmd.getColumnCount();
             result.object();
-
+            String object="";
             for (int i=1; i<numColumns+1; i++) {
+                object="";
                 String column_name = rsmd.getColumnName(i);
 
-                if(rsmd.getColumnType(i)==java.sql.Types.ARRAY) {
-                    // Not implemented
-                } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
-                    result.key(column_name).value(rs.getInt(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
-                    result.key(column_name).value(rs.getBoolean(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.BLOB){
-                    // Not implemented
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
-                    result.key(column_name).value(rs.getDouble(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
-                    result.key(column_name).value(rs.getFloat(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
-                    result.key(column_name).value(rs.getInt(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
+                if(rsmd.getColumnType(i)==java.sql.Types.NVARCHAR){
                     String s=rs.getNString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
                     if(start.equals("{\"type\":")) {
-                        result.key(column_name).value( new MyJsonString(rs.getNString(i)));
+                        object+="\"geometry\":"+s+",";
                     } else {
-                        result.key(column_name).value(rs.getNString(i));
+                        object+="\""+column_name+"\":\""+s+"\",";
                     }
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
-                    String s=rs.getNString(column_name);
+                } else if(rsmd.getColumnType(i)==java.sql.Types.VARCHAR){
+                    String s=rs.getString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
-                    if (start.equals("{\"type\":")) {
-                        result.key(column_name).value( new MyJsonString(rs.getString(i)));
+                    if(start.equals("{\"type\":")) {
+                        object+="\"geometry\":"+s+",";
                     } else {
-                        result.key(column_name).value(rs.getString(column_name));
+                        object+="\""+column_name+"\":\""+s+"\",";
                     }
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
-                    result.key(column_name).value(rs.getInt(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
-                    result.key(column_name).value(rs.getInt(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
-                    result.key(column_name).value(rs.getDate(i));
-                }
-                else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
-                    result.key(column_name).value(rs.getTimestamp(i));
-                }
-                else{
+                } else if(rsmd.getColumnType(i)==java.sql.Types.BIGINT) {
+                    object+="\""+column_name+"\":"+rs.getInt(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.BOOLEAN){
+                    if (rs.getBoolean(i)) {
+                        object+="\""+column_name+"\":true,";
+                    } else {
+                        object+="\""+column_name+"\":false,";
+                    }
+                } else if(rsmd.getColumnType(i)==java.sql.Types.DOUBLE){
+                    object+="\""+column_name+"\":"+rs.getDouble(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.FLOAT){
+                    object+="\""+column_name+"\":"+rs.getFloat(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.INTEGER){
+                    object+="\""+column_name+"\":"+rs.getInt(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.TINYINT){
+                    object+="\""+column_name+"\":"+rs.getInt(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.SMALLINT){
+                    object+="\""+column_name+"\":"+rs.getInt(i)+",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.DATE){
+                    object+="\""+column_name+"\":\""+rs.getDate(i)+"\",";
+                } else if(rsmd.getColumnType(i)==java.sql.Types.TIMESTAMP){
+                    object+="\""+column_name+"\":"+rs.getTimestamp(i)+",";
+                } else{
                     // Not implemented
                 }
             }
-
-            result.endObject();
+            if (!object.equals("")) {
+                object="{"+object.substring(0,object.length() -1)+"},";
+            }
+            array+=object;
         }
-        result.endArray();
-        return result.toString();
+        if (!array.equals("")) {
+            array=array.substring(0,array.length() -1)
+        }
+        array="["+array+"]";
+        return array;
     }
 }
