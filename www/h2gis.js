@@ -8,7 +8,11 @@ var h2gis = {
             [{                  // and this array of custom arguments to create our entry
                 "query": query
             }]
-        ); 
+        );
+    }
+
+    shp2table: function(path,tableName) {
+        query("CALL SHPREAD('"+path+"','"+tableName.toUppercase()+"');",)
     }
 }
 module.exports = h2gis;
