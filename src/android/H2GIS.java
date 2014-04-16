@@ -27,6 +27,7 @@ public class H2GIS extends CordovaPlugin {
     public static final String ACTION_QUERY = "query";
     private Connection connection;
     @Override
+
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         // your init code here
