@@ -9,10 +9,6 @@ var h2gis = {
                 "query": query
             }]
         );
-    }
-
-    shp2table: function(path,tableName) {
-        query("CALL SHPREAD('"+path+"','"+tableName.toUppercase()+"');",)
-    }
+    };
 }
 module.exports = h2gis;
