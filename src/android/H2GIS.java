@@ -48,9 +48,7 @@ public class H2GIS extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        String path=new String("");
         try {
-            path=context.getApplicationInfo().dataDir;
             if (ACTION_QUERY.equals(action)) {
                 JSONObject arg_object = args.getJSONObject(0);
                 String query = arg_object.getString("query").trim();
