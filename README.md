@@ -1,7 +1,9 @@
 mobileh2gis-phonegap
 ====================
 
-The plugin repositry.
+#The phonegap plugin repositry for using H2GIS. The *.jar files included in the /lib folder might ot always be the most recent. 
+
+###How to use:
 
 To be used in a phonegap project folder by using the command:
 
