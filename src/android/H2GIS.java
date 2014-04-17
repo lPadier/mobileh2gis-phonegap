@@ -1,3 +1,13 @@
+/***
+* FILE HEADER
+*	 
+* Authors:	Loïc Padier, Thomas Buick, Alexis 
+* 			Students at Ecole Centrale de Nantes, France.  
+*
+* Licence: GPL V2
+*
+****/
+
 package org.ogis.h2gis;
 
 // Cordava Imports
