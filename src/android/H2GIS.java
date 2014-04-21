@@ -170,7 +170,7 @@ public class H2GIS extends CordovaPlugin {
                     String s=rs.getNString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
                     if(start.equals("{\"type\":")) {
-                        object+="\"geometry\":"+s+",";
+                        object+="\""+column_name+"\":"+s+",";
                     } else {
                         object+="\""+column_name+"\":\""+s+"\",";
                     }
@@ -178,7 +178,7 @@ public class H2GIS extends CordovaPlugin {
                     String s=rs.getString(column_name);
                     String start=s.substring(0,Math.min(s.length(),8));
                     if(start.equals("{\"type\":")) {
-                        object+="\"geometry\":"+s+",";
+                        object+="\""+column_name+"\":"+s+",";
                     } else {
                         object+="\""+column_name+"\":\""+s+"\",";
                     }
